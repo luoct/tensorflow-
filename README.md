@@ -10,6 +10,7 @@
 
 在Google Colab中使用`tensorboard`:
 ```python
+    # 重新使用tensorboard时，使用 reload
     %load_ext tensorboard
     %tensorboard --logdir someDir
 ```
