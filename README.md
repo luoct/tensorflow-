@@ -123,7 +123,7 @@
   ![biases-mean](./imgs/biases-mean.jpg) ![weights-mean](./imgs/weights-mean.jpg)
 
 
-### 卷积神经网络
+### 卷积神经网络（CNN）
 + 传统神经网络存在问题
   - 权值太多，计算量太大
   - 需要大量样本进行训练
@@ -152,3 +152,45 @@
       — 使用SAME 得到1x2的平面
       — 使用VALID 得到1x1的平面
       
++ 代码实现
+  ```python
+    #卷积层
+    def conv2d(x,W):
+      #x input tensor of shape `[batch, in_height, in_width, in_channels]`
+      #W filter / kernel tensor of shape [filter_height, filter_width, in_channels, out_channels]
+      #`strides[0] = strides[3] = 1`. strides[1]代表x方向的步长，strides[2]代表y方向的步长
+      #padding: A `string` from: `"SAME", "VALID"`
+      return tf.nn.conv2d(x,W,strides=[1,1,1,1],padding='SAME')
+
+    #池化层
+    def max_pool_2x2(x):
+      #ksize [1,x,y,1]
+      return tf.nn.max_pool(x,ksize=[1,2,2,1],strides=[1,2,2,1],padding='SAME')
+
+  ```
+  1. 将图片转换为 28*28 通道（特征平面）为1  
+    `x_image = tf.reshape(x,[-1,28,28,1],name='x_image')`
+  2. 5*5的采样窗口卷积1，输出32个卷积核（特征平面）
+    `conv2d_1 = conv2d(x_image, weight_variable([5,5,1,32])) + b_conv1`
+  3. 使用激活函数relu，进行池化变成14*14
+    `h_pool1 = max_pool_2x2(tf.nn.relu(conv2d_1))`
+  4. 5*5的采样窗口卷积2，输出64个卷积核（特征平面）
+    `conv2d_2 = conv2d(h_pool1, weight_variable([5,5,32,64])) + b_conv2`
+  5. 重复卷积池化成7\*7，通道数为64 即是：7\*7*64
+  6. 扁平化，全连接层
+
+
+### `RNN` & `LSTM`
+![RNN](./imgs/RNN.jpg)
+![LSTM](./imgs/LSTM.jpg)
+
++ `RNN` 特点
+  - 层间神经元也有连接（主要为隐层）
+  - 共享参数
+  - 在处理长序列数据时，极易导致梯度消失问题。
++ `LSTM` 特点
+  - 增加一条贯穿与链上的信息传送带，称为细胞状态（cell state）
+  - 通过三个门结构来维护cell state上的信息。
+  - 对上一个节点的输入选择性忘记
+  - 对该节点的输入选择性记忆
+  - 决定哪些被当做当前状态的输出
